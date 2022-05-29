@@ -52,4 +52,5 @@ npm install
 This project is under the [MIT LICENSE](LICENSE).
 
 Leave a star to help the project
+
 Created by [Renan Pereira](https://github.com/r3nanp) :heart:
