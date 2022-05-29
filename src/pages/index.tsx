@@ -9,7 +9,7 @@ const Home: NextPage = () => {
   const [value, setValue] = useState('')
   const [shortUrl, setShortUrl] = useState<string | null>(null)
 
-  const handleSubmit = useCallback(async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
     const { data } = await api.post<ShortData>('/shorten', {
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
     const formattedUrl = `${document.location.protocol}//${document.location.host}/${data.short}`
 
     setShortUrl(formattedUrl)
-  }, [])
+  }
 
   return (
     <div className="h-screen w-full flex bg-gray-100 items-center justify-center">
