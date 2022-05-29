@@ -1,17 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { setUrl } from '@/lib/redis'
+import { ShortData } from '@/types/ShortData'
 
-type Data = {
-  url: string
-}
-
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<ShortData>
 ) {
   const url = req.body.url
+  const short = await setUrl(url)
 
-  console.log(url)
-
-  res.status(200).json({ url })
+  res.status(200).json({ url, short })
 }
