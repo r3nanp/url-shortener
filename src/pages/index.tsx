@@ -3,16 +3,22 @@ import Head from 'next/head'
 import { FormEvent, useCallback, useState } from 'react'
 
 import { api } from '@/lib/axios'
+import { ShortData } from '@/types/ShortData'
 
 const Home: NextPage = () => {
   const [value, setValue] = useState('')
+  const [shortUrl, setShortUrl] = useState<string | null>(null)
 
   const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault()
 
-    await api.post('/shorten', {
+    const { data } = await api.post<ShortData>('/shorten', {
       url: value
     })
+
+    const formattedUrl = `${document.location.protocol}//${document.location.host}/${data.short}`
+
+    setShortUrl(formattedUrl)
   }, [])
 
   return (
@@ -54,6 +60,12 @@ const Home: NextPage = () => {
                 Shorten!
               </button>
             </div>
+
+            {shortUrl ? (
+              <div>
+                <a href={shortUrl}>{shortUrl}</a>
+              </div>
+            ) : null}
           </form>
         </section>
       </main>
