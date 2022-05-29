@@ -10,7 +10,7 @@ const redis = new Redis({
 export async function setUrl(url: string) {
   const short = getShort()
 
-  const result = await redis.set(`short/${short}`, url)
+  await redis.set(`short/${short}`, url)
 
   return short
 }
