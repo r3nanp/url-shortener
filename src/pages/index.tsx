@@ -1,25 +1,58 @@
 import { NextPage } from 'next'
 import Head from 'next/head'
-import { FormEvent, useCallback, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { Check, Copy } from 'phosphor-react'
 
 import { api } from '@/lib/axios'
+import { Button, Input } from '@/components'
+import { resolver } from '@/handlers/url'
 import { ShortData } from '@/types/ShortData'
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
+
+type UrlType = { url: string }
 
 const Home: NextPage = () => {
-  const [value, setValue] = useState('')
+  const [_, copy] = useCopyToClipboard()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const {
+    register,
+    handleSubmit,
+    clearErrors,
+    formState: { errors, isDirty, isSubmitting }
+  } = useForm({
+    resolver
+  })
+
   const [shortUrl, setShortUrl] = useState<string | null>(null)
+  const [isCopied, setIsCopied] = useState(false)
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+  const handleOnCopy = async () => {
+    if (!shortUrl) return
 
-    const { data } = await api.post<ShortData>('/shorten', {
-      url: value
+    const result = await copy(shortUrl)
+    setIsCopied(result)
+  }
+
+  const handleSend: SubmitHandler<UrlType> = async data => {
+    const { data: response } = await api.post<ShortData>('/shorten', {
+      url: data
     })
 
-    const formattedUrl = `${document.location.protocol}//${document.location.host}/${data.short}`
+    const formattedUrl = `${document.location.protocol}//${document.location.host}/${response.short}`
 
     setShortUrl(formattedUrl)
+    setIsCopied(false)
   }
+
+  const onSubmit = handleSubmit(({ url }) => {
+    handleSend(url)
+  })
+
+  useEffect(() => {
+    inputRef?.current?.focus()
+  }, [])
 
   return (
     <div className="h-screen w-full flex bg-gray-100 items-center justify-center">
@@ -37,34 +70,61 @@ const Home: NextPage = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="flex items-center justify-center w-full">
-              <input
-                value={value}
-                placeholder="https://mylongurl.com"
-                className="rounded-md px-1 w-full py-2 bg-white shadow-lg"
-                onChange={event => setValue(event.target.value)}
+          <form onSubmit={onSubmit}>
+            <div className="flex items-center justify-center">
+              <Input
+                error={errors?.url}
+                onFocus={() => clearErrors()}
+                {...register('url')}
+                ref={inputRef}
+                name="url"
               />
 
-              <button
+              <Button
+                className="ml-4"
                 type="submit"
-                disabled={value === ''}
-                className="ml-2 rounded-md flex items-center bg-blue-400 py-2 px-6 cursor-pointer
-                tracking-wider
-                hover:bg-blue-500
-                transition-colors
-                shadow-lg
-                disabled:bg-gray-400
-                text-white font-bold"
-              >
-                Shorten!
-              </button>
+                content="Shorten!"
+                disabled={!isDirty}
+                isLoading={isSubmitting}
+              />
             </div>
 
             {shortUrl ? (
-              <div>
-                <a href={shortUrl}>{shortUrl}</a>
-              </div>
+              <section className="mt-6">
+                <p>Check it out!</p>
+
+                <div className="flex items-center text-center">
+                  <a className="text-blue-400 w-full" href={shortUrl}>
+                    {shortUrl}
+                  </a>
+
+                  <Button
+                    className="ml-2"
+                    type="button"
+                    content={isCopied ? 'Copied!' : 'Copy'}
+                    data-bs-target="tooltip"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Click to copy to clipboard"
+                    onClick={handleOnCopy}
+                    leftIcon={
+                      isCopied ? (
+                        <Check
+                          className="text-white mr-2"
+                          width={20}
+                          height={20}
+                        />
+                      ) : (
+                        <Copy
+                          className="text-white mr-2"
+                          width={20}
+                          height={20}
+                        />
+                      )
+                    }
+                  />
+                </div>
+              </section>
             ) : null}
           </form>
         </section>
