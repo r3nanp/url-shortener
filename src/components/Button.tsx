@@ -31,7 +31,7 @@ export const Button = ({
         {...rest}
         type={type}
         className={clsx(
-          'flex items-center rounded-md bg-indigo-400 py-2 px-6 disabled:cursor-not-allowed cursor-pointer tracking-wider focus:outline-none hover:bg-indigo-500 transition-colors shadow-md disabled:bg-gray-400 dark:disabled:bg-gray-50 text-white font-bold',
+          'flex items-center rounded-md bg-indigo-400 py-2 px-6 disabled:cursor-not-allowed cursor-pointer tracking-wider focus:outline-none hover:bg-indigo-500 transition-colors shadow-md disabled:opacity-50 text-white font-bold',
           sizes[size],
           className
         )}

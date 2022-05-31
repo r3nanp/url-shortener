@@ -1,27 +1,24 @@
 import { NextPage } from 'next'
-import Head from 'next/head'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Check, Copy } from 'phosphor-react'
+import Head from 'next/head'
 
 import { api } from '@/lib/axios'
 import { Button, Input } from '@/components'
 import { resolver } from '@/handlers/url'
 import { ShortData } from '@/types/ShortData'
+import { IFormValues } from '@/types/Form'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
-
-type UrlType = { url: string }
 
 const Home: NextPage = () => {
   const [_, copy] = useCopyToClipboard()
-  const inputRef = useRef<HTMLInputElement | null>(null)
-
   const {
     register,
     handleSubmit,
     clearErrors,
     formState: { errors, isDirty, isSubmitting }
-  } = useForm({
+  } = useForm<IFormValues>({
     resolver
   })
 
@@ -35,9 +32,9 @@ const Home: NextPage = () => {
     setIsCopied(result)
   }
 
-  const handleSend: SubmitHandler<UrlType> = async data => {
+  const handleSend: SubmitHandler<IFormValues> = async ({ url }) => {
     const { data: response } = await api.post<ShortData>('/shorten', {
-      url: data
+      url
     })
 
     const formattedUrl = `${document.location.protocol}//${document.location.host}/${response.short}`
@@ -46,13 +43,7 @@ const Home: NextPage = () => {
     setIsCopied(false)
   }
 
-  const onSubmit = handleSubmit(({ url }) => {
-    handleSend(url)
-  })
-
-  useEffect(() => {
-    inputRef?.current?.focus()
-  }, [])
+  const onSubmit = handleSubmit(handleSend)
 
   return (
     <div className="h-screen overflow-hidden w-full flex bg-gray-100 dark:bg-slate-800 items-center justify-center">
@@ -75,11 +66,11 @@ const Home: NextPage = () => {
           <form onSubmit={onSubmit}>
             <div className="flex items-center justify-center">
               <Input
+                {...register('url')}
+                type="url"
+                name="url"
                 error={errors?.url}
                 onFocus={() => clearErrors()}
-                {...register('url')}
-                ref={inputRef}
-                name="url"
               />
 
               <Button
