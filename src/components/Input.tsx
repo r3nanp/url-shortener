@@ -23,7 +23,7 @@ export const InputComponent: ForwardRefRenderFunction<
         name={name}
         placeholder="https://mylongurl.com"
         className={clsx(
-          'rounded-md min-h-fit max-h-20 px-1 w-full py-2 bg-white shadow-md',
+          'rounded-md min-h-fit max-h-20 px-1 w-full py-2 bg-white dark:bg-gray-600 dark:text-white shadow-md placeholder:text-gray-300',
           className
         )}
         {...rest}
