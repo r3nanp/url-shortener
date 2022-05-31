@@ -55,7 +55,7 @@ const Home: NextPage = () => {
   }, [])
 
   return (
-    <div className="h-screen w-full flex bg-gray-100 items-center justify-center">
+    <div className="h-screen overflow-hidden w-full flex bg-gray-100 dark:bg-slate-800 items-center justify-center">
       <Head>
         <title>URL Shortener</title>
       </Head>
@@ -63,8 +63,10 @@ const Home: NextPage = () => {
       <main className="flex items-center justify-center px-6">
         <section className="h-full w-full">
           <div className="my-4">
-            <h1 className="text-4xl font-light my-2">Keep it brief.</h1>
-            <p className="text-2xl font-normal">
+            <h1 className="text-4xl dark:text-white font-light my-2">
+              Keep it brief.
+            </h1>
+            <p className="text-2xl dark:text-gray-50 font-normal">
               A <span className="font-bold">easier</span> way to{' '}
               <span className="font-bold">share links</span>
             </p>
@@ -91,15 +93,13 @@ const Home: NextPage = () => {
 
             {shortUrl ? (
               <section className="mt-6">
-                <p>Check it out!</p>
-
-                <div className="flex items-center text-center">
-                  <a className="text-blue-400 w-full" href={shortUrl}>
+                <div className="flex items-center text-center w-full">
+                  <a className="text-blue-400" href={shortUrl}>
                     {shortUrl}
                   </a>
 
                   <Button
-                    className="ml-2"
+                    className="ml-4"
                     type="button"
                     content={isCopied ? 'Copied!' : 'Copy'}
                     data-bs-target="tooltip"
