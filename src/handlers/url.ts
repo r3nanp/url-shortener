@@ -6,9 +6,7 @@ const urlSchema = z.object({
     .string({
       required_error: 'The url must be specified'
     })
-    .url({
-      message: 'This url is invalid'
-    })
+    .url('This url is invalid')
 })
 
 export const resolver = zodResolver(urlSchema)
