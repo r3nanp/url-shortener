@@ -29,7 +29,9 @@ export const InputComponent: ForwardRefRenderFunction<
         {...rest}
       />
 
-      {!!error && <p className="text-sm text-red-400 mt-2">{error.message}</p>}
+      {!!error && (
+        <span className="text-sm text-red-400 mt-2">{error.message}</span>
+      )}
     </div>
   )
 }
