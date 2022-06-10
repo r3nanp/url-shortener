@@ -30,6 +30,10 @@ const Home: NextPage = () => {
 
     const result = await copy(shortUrl)
     setIsCopied(result)
+
+    setTimeout(() => {
+      setIsCopied(false)
+    }, 1000)
   }
 
   const handleSend: SubmitHandler<IFormValues> = async ({ url }) => {
